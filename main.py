@@ -12,12 +12,12 @@ load_dotenv()
 from telethon import TelegramClient, events
 from telethon.tl.types import User
 from openai import AsyncOpenAI
-
+load_dotenv()
 # ─── CONFIG ───────────────────────────────────────────────
-API_ID = int(os.environ.get("TG_API_ID", "0"))
-API_HASH = os.environ.get("TG_API_HASH", "")
-OPENROUTER_KEY = os.environ.get("OPENROUTER_API_KEY", "")
-MY_USER_ID = int(os.environ.get("MY_USER_ID", "0"))
+API_ID = int(os.environ["TG_API_ID"])
+API_HASH = os.environ["TG_API_HASH"]
+OPENROUTER_KEY = os.environ["OPENROUTER_API_KEY"]
+MY_USER_ID = int(os.environ["MY_USER_ID"])
 
 # OpenRouter client
 openrouter = AsyncOpenAI(
