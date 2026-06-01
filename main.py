@@ -10,14 +10,16 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 from telethon import TelegramClient, events
+from telethon.sessions import StringSession
 from telethon.tl.types import User
 from openai import AsyncOpenAI
-load_dotenv()
+
 # ─── CONFIG ───────────────────────────────────────────────
-API_ID = int(os.environ["TG_API_ID"])
-API_HASH = os.environ["TG_API_HASH"]
-OPENROUTER_KEY = os.environ["OPENROUTER_API_KEY"]
-MY_USER_ID = int(os.environ["MY_USER_ID"])
+API_ID = int(os.environ["TG_API_ID"].strip())
+API_HASH = os.environ["TG_API_HASH"].strip()
+OPENROUTER_KEY = os.environ["OPENROUTER_API_KEY"].strip()
+MY_USER_ID = int(os.environ["MY_USER_ID"].strip())
+SESSION_STRING = os.environ["SESSION_STRING"].strip()
 
 # OpenRouter client
 openrouter = AsyncOpenAI(
@@ -79,8 +81,9 @@ async def get_ai_reply(chat_id: int, user_text: str) -> str:
 
     messages = [{"role": "system", "content": SYSTEM_PROMPT}] + chat_history[chat_id]
 
-    # Claude urinish
     reply = None
+
+    # Claude urinish
     try:
         response = await openrouter.chat.completions.create(
             model=PRIMARY_MODEL,
@@ -115,7 +118,7 @@ async def get_ai_reply(chat_id: int, user_text: str) -> str:
 # ─── TELEGRAM ─────────────────────────────────────────────
 
 async def main():
-    tg = TelegramClient("userbot_session", API_ID, API_HASH)
+    tg = TelegramClient(StringSession(SESSION_STRING), API_ID, API_HASH)
 
     @tg.on(events.NewMessage(incoming=True, func=lambda e: e.is_private))
     async def handle_private(event):
